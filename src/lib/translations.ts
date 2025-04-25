@@ -1,21 +1,54 @@
+import { getRequestConfig } from "next-intl/server";
+import { notFound } from "next/navigation";
 
-export type TranslationKey = keyof typeof translations.en;
+const locales = ["en", "id", "zh"];
+
+export const getLocale = () => {
+  const pathname = new URL(window.location.href).pathname;
+  const locale = locales.find((locale) =>
+    pathname.startsWith(`/${locale}`)
+  );
+  return locale || "en";
+};
+
+export async function generateRequestConfig({
+  locale,
+}: {
+  locale: string;
+}) {
+  if (!locales.includes(locale)) notFound();
+
+  return getRequestConfig({
+    messages: (await import(`./messages/${locale}.json`)).default,
+  });
+}
+
+export function useTranslation(locale: string) {
+  const t = (key: string) => {
+    // @ts-ignore
+    return translations[locale][key] || key;
+  };
+  return { t };
+}
 
 export const translations = {
   en: {
-    appTitle: "To-Do List",
+    appTitle: "Tasks",
     addTask: "Add Task",
     editTask: "Edit Task",
     taskTitle: "Title",
+    enterTaskTitle: "Enter task title",
     taskDescription: "Description",
+    enterTaskDescription: "Enter task description",
     taskCategory: "Category",
-    taskDueDate: "Due Date & Time",
-    taskImportant: "Mark as Important",
+    taskDueDate: "Due Date",
+    taskImportant: "Mark as important",
+    selectDueDate: "Select due date",
     save: "Save",
     cancel: "Cancel",
     delete: "Delete",
-    complete: "Complete",
-    incomplete: "Incomplete",
+    noTasks: "No tasks yet. Add your first task!",
+    taskDeleted: "Task deleted",
     settings: "Settings",
     themeLabel: "Theme",
     lightMode: "Light Mode",
@@ -24,106 +57,90 @@ export const translations = {
     english: "English",
     indonesian: "Indonesian",
     chinese: "Chinese",
-    noTasks: "No tasks yet. Add a new task to get started!",
+    selectCategory: "Select a category",
     gym: "Gym",
     run: "Run",
     work: "Work",
     design: "Design",
-    customCategory: "Custom Category",
-    taskAdded: "Task added successfully",
-    taskUpdated: "Task updated successfully",
-    taskDeleted: "Task deleted successfully",
-    enterTaskTitle: "Enter task title",
-    enterTaskDescription: "Enter task description (optional)",
-    selectCategory: "Select category",
-    selectDueDate: "Select due date and time",
+    addCategory: "Add Category",
+    addNewCategory: "Add New Category",
+    categoryName: "Category Name",
+    enterCategoryName: "Enter category name",
+    chooseIcon: "Choose Icon",
+    add: "Add",
   },
   id: {
-    appTitle: "Daftar Tugas",
+    appTitle: "Tugas",
     addTask: "Tambah Tugas",
     editTask: "Edit Tugas",
     taskTitle: "Judul",
+    enterTaskTitle: "Masukkan judul tugas",
     taskDescription: "Deskripsi",
+    enterTaskDescription: "Masukkan deskripsi tugas",
     taskCategory: "Kategori",
-    taskDueDate: "Tanggal & Waktu Jatuh Tempo",
-    taskImportant: "Tandai sebagai Penting",
+    taskDueDate: "Tenggat Waktu",
+    taskImportant: "Tandai sebagai penting",
+    selectDueDate: "Pilih tenggat waktu",
     save: "Simpan",
     cancel: "Batal",
     delete: "Hapus",
-    complete: "Selesai",
-    incomplete: "Belum Selesai",
+    noTasks: "Belum ada tugas. Tambahkan tugas pertama Anda!",
+    taskDeleted: "Tugas dihapus",
     settings: "Pengaturan",
     themeLabel: "Tema",
     lightMode: "Mode Terang",
     darkMode: "Mode Gelap",
     languageLabel: "Bahasa",
-    english: "Inggris",
-    indonesian: "Indonesia",
-    chinese: "Mandarin",
-    noTasks: "Belum ada tugas. Tambahkan tugas baru untuk memulai!",
+    english: "Bahasa Inggris",
+    indonesian: "Bahasa Indonesia",
+    chinese: "Bahasa Mandarin",
+    selectCategory: "Pilih kategori",
     gym: "Gym",
     run: "Lari",
     work: "Kerja",
     design: "Desain",
-    customCategory: "Kategori Kustom",
-    taskAdded: "Tugas berhasil ditambahkan",
-    taskUpdated: "Tugas berhasil diperbarui",
-    taskDeleted: "Tugas berhasil dihapus",
-    enterTaskTitle: "Masukkan judul tugas",
-    enterTaskDescription: "Masukkan deskripsi tugas (opsional)",
-    selectCategory: "Pilih kategori",
-    selectDueDate: "Pilih tanggal dan waktu jatuh tempo",
+    addCategory: "Tambah Kategori",
+    addNewCategory: "Tambah Kategori Baru",
+    categoryName: "Nama Kategori",
+    enterCategoryName: "Masukkan nama kategori",
+    chooseIcon: "Pilih Ikon",
+    add: "Tambah",
   },
   zh: {
-    appTitle: "待办事项",
+    appTitle: "任务",
     addTask: "添加任务",
     editTask: "编辑任务",
     taskTitle: "标题",
+    enterTaskTitle: "输入任务标题",
     taskDescription: "描述",
+    enterTaskDescription: "输入任务描述",
     taskCategory: "类别",
-    taskDueDate: "截止日期和时间",
+    taskDueDate: "截止日期",
     taskImportant: "标记为重要",
+    selectDueDate: "选择截止日期",
     save: "保存",
     cancel: "取消",
     delete: "删除",
-    complete: "完成",
-    incomplete: "未完成",
+    noTasks: "还没有任务。添加您的第一个任务！",
+    taskDeleted: "任务已删除",
     settings: "设置",
     themeLabel: "主题",
-    lightMode: "浅色模式",
-    darkMode: "深色模式",
+    lightMode: "亮色模式",
+    darkMode: "暗色模式",
     languageLabel: "语言",
     english: "英语",
     indonesian: "印尼语",
     chinese: "中文",
-    noTasks: "暂无任务。添加新任务开始使用！",
+    selectCategory: "选择类别",
     gym: "健身",
     run: "跑步",
     work: "工作",
     design: "设计",
-    customCategory: "自定义类别",
-    taskAdded: "任务添加成功",
-    taskUpdated: "任务更新成功",
-    taskDeleted: "任务删除成功",
-    enterTaskTitle: "输入任务标题",
-    enterTaskDescription: "输入任务描述（可选）",
-    selectCategory: "选择类别",
-    selectDueDate: "选择截止日期和时间",
+    addCategory: "添加类别",
+    addNewCategory: "添加新类别",
+    categoryName: "类别名称",
+    enterCategoryName: "输入类别名称",
+    chooseIcon: "选择图标",
+    add: "添加",
   },
-};
-
-export const useTranslation = (language: string) => {
-  const getValidLanguage = (): "en" | "id" | "zh" => {
-    if (language === "en" || language === "id" || language === "zh") {
-      return language;
-    }
-    return "en";
-  };
-
-  const t = (key: TranslationKey) => {
-    const lang = getValidLanguage();
-    return translations[lang][key] || translations.en[key];
-  };
-
-  return { t };
 };

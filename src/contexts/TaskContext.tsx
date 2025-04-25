@@ -4,6 +4,12 @@ import { toast } from "sonner";
 
 export type TaskCategory = "gym" | "run" | "work" | "design" | string;
 
+export interface CategoryItem {
+  id: string;
+  label: string;
+  icon: string;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -17,11 +23,13 @@ export interface Task {
 
 interface TaskContextType {
   tasks: Task[];
+  categories: CategoryItem[];
   addTask: (task: Omit<Task, "id" | "createdAt" | "completed">) => void;
   updateTask: (id: string, task: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   toggleTaskCompleted: (id: string) => void;
   toggleTaskImportant: (id: string) => void;
+  addCategory: (category: CategoryItem) => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -33,6 +41,13 @@ export const useTasks = () => {
   }
   return context;
 };
+
+const DEFAULT_CATEGORIES: CategoryItem[] = [
+  { id: "gym", label: "gym", icon: "🏋️" },
+  { id: "run", label: "run", icon: "🏃" },
+  { id: "work", label: "work", icon: "💼" },
+  { id: "design", label: "design", icon: "🎨" },
+];
 
 export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tasks, setTasks] = useState<Task[]>(() => {
@@ -53,6 +68,19 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return [];
   });
 
+  const [categories, setCategories] = useState<CategoryItem[]>(() => {
+    const savedCategories = localStorage.getItem("categories");
+    if (savedCategories) {
+      try {
+        return JSON.parse(savedCategories);
+      } catch (error) {
+        console.error("Failed to parse saved categories:", error);
+        return DEFAULT_CATEGORIES;
+      }
+    }
+    return DEFAULT_CATEGORIES;
+  });
+
   useEffect(() => {
     localStorage.setItem(
       "tasks",
@@ -64,6 +92,10 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       })
     );
   }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem("categories", JSON.stringify(categories));
+  }, [categories]);
 
   const addTask = (task: Omit<Task, "id" | "createdAt" | "completed">) => {
     const newTask: Task = {
@@ -106,13 +138,26 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   };
 
+  const addCategory = (category: CategoryItem) => {
+    // Check if category with this ID already exists
+    if (categories.some(c => c.id === category.id)) {
+      toast.error("Category already exists");
+      return;
+    }
+
+    setCategories((prevCategories) => [...prevCategories, category]);
+    toast.success("Category added successfully");
+  };
+
   const value = {
     tasks,
+    categories,
     addTask,
     updateTask,
     deleteTask,
     toggleTaskCompleted,
     toggleTaskImportant,
+    addCategory,
   };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;

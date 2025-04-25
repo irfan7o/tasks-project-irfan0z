@@ -14,23 +14,8 @@ interface TaskItemProps {
   onEdit: (task: Task) => void;
 }
 
-const getCategoryIcon = (category: string): string => {
-  switch (category) {
-    case "gym":
-      return "🏋️";
-    case "run":
-      return "🏃";
-    case "work":
-      return "💼";
-    case "design":
-      return "🎨";
-    default:
-      return "📝";
-  }
-};
-
 const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
-  const { toggleTaskCompleted, toggleTaskImportant, deleteTask } = useTasks();
+  const { toggleTaskCompleted, toggleTaskImportant, deleteTask, categories } = useTasks();
   const { language } = useSettings();
   const { t } = useTranslation(language);
 
@@ -40,6 +25,12 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
   };
 
   const isOverdue = task.dueDate && new Date() > task.dueDate && !task.completed;
+
+  // Get the icon for the category
+  const getCategoryIcon = () => {
+    const category = categories.find(c => c.id === task.category);
+    return category ? category.icon : "📝";
+  };
 
   return (
     <div className={`task-card animate-fade-in ${task.completed ? "opacity-70" : ""}`}>
@@ -87,8 +78,8 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
               <span 
                 className="inline-flex items-center text-xs px-2 py-1 rounded-full bg-secondary"
               >
-                <span className="mr-1">{getCategoryIcon(task.category)}</span>
-                {t(task.category as any)}
+                <span className="mr-1">{getCategoryIcon()}</span>
+                {t(task.category)}
               </span>
               
               {task.dueDate && (

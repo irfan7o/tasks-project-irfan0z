@@ -2,25 +2,19 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, X, Flag } from "lucide-react";
-import { useTasks, Task, TaskCategory } from "@/contexts/TaskContext";
+import { useTasks, Task } from "@/contexts/TaskContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useTranslation } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
+import { CategoryPicker } from "@/components/CategoryPicker";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -32,26 +26,14 @@ interface TaskFormProps {
   onClose: () => void;
 }
 
-const categories = [
-  { id: "gym", label: "gym", icon: "🏋️" },
-  { id: "run", label: "run", icon: "🏃" },
-  { id: "work", label: "work", icon: "💼" },
-  { id: "design", label: "design", icon: "🎨" },
-];
-
-const getCategoryIcon = (category: TaskCategory) => {
-  const found = categories.find((c) => c.id === category);
-  return found ? found.icon : "📝";
-};
-
 const TaskForm: React.FC<TaskFormProps> = ({ task, isOpen, onClose }) => {
   const { language } = useSettings();
   const { t } = useTranslation(language);
-  const { addTask, updateTask } = useTasks();
+  const { addTask, updateTask, categories, addCategory } = useTasks();
 
   const [title, setTitle] = useState(task?.title || "");
   const [description, setDescription] = useState(task?.description || "");
-  const [category, setCategory] = useState<TaskCategory>(task?.category || "work");
+  const [category, setCategory] = useState(task?.category || "work");
   const [dueDate, setDueDate] = useState<Date | null>(task?.dueDate || null);
   const [important, setImportant] = useState(task?.important || false);
 
@@ -113,21 +95,12 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, isOpen, onClose }) => {
 
           <div className="space-y-2">
             <Label htmlFor="category">{t("taskCategory")}</Label>
-            <Select value={category} onValueChange={(value) => setCategory(value)}>
-              <SelectTrigger id="category">
-                <SelectValue placeholder={t("selectCategory")} />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    <div className="flex items-center">
-                      <span className="mr-2">{cat.icon}</span>
-                      <span>{t(cat.label as any)}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CategoryPicker
+              value={category}
+              onChange={setCategory}
+              categories={categories}
+              onAddCategory={addCategory}
+            />
           </div>
 
           <div className="space-y-2">
