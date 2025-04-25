@@ -1,0 +1,212 @@
+
+import React, { useState } from "react";
+import { format } from "date-fns";
+import { CalendarIcon, X, Flag } from "lucide-react";
+import { useTasks, Task, TaskCategory } from "@/contexts/TaskContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { useTranslation } from "@/lib/translations";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+
+interface TaskFormProps {
+  task?: Task;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const categories = [
+  { id: "gym", label: "gym", icon: "🏋️" },
+  { id: "run", label: "run", icon: "🏃" },
+  { id: "work", label: "work", icon: "💼" },
+  { id: "design", label: "design", icon: "🎨" },
+];
+
+const getCategoryIcon = (category: TaskCategory) => {
+  const found = categories.find((c) => c.id === category);
+  return found ? found.icon : "📝";
+};
+
+const TaskForm: React.FC<TaskFormProps> = ({ task, isOpen, onClose }) => {
+  const { language } = useSettings();
+  const { t } = useTranslation(language);
+  const { addTask, updateTask } = useTasks();
+
+  const [title, setTitle] = useState(task?.title || "");
+  const [description, setDescription] = useState(task?.description || "");
+  const [category, setCategory] = useState<TaskCategory>(task?.category || "work");
+  const [dueDate, setDueDate] = useState<Date | null>(task?.dueDate || null);
+  const [important, setImportant] = useState(task?.important || false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!title.trim()) return;
+
+    if (task) {
+      updateTask(task.id, {
+        title,
+        description,
+        category,
+        dueDate,
+        important,
+      });
+    } else {
+      addTask({
+        title,
+        description,
+        category,
+        dueDate,
+        important,
+      });
+    }
+
+    onClose();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>{task ? t("editTask") : t("addTask")}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">{t("taskTitle")} *</Label>
+            <Input
+              id="title"
+              placeholder={t("enterTaskTitle")}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">{t("taskDescription")}</Label>
+            <Textarea
+              id="description"
+              placeholder={t("enterTaskDescription")}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full min-h-[100px]"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">{t("taskCategory")}</Label>
+            <Select value={category} onValueChange={(value) => setCategory(value)}>
+              <SelectTrigger id="category">
+                <SelectValue placeholder={t("selectCategory")} />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    <div className="flex items-center">
+                      <span className="mr-2">{cat.icon}</span>
+                      <span>{t(cat.label as any)}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="dueDate">{t("taskDueDate")}</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !dueDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dueDate ? format(dueDate, "PPP HH:mm") : <span>{t("selectDueDate")}</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dueDate || undefined}
+                  onSelect={(date) => setDueDate(date)}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+                {dueDate && (
+                  <div className="p-3 border-t">
+                    <Input
+                      type="time"
+                      value={dueDate ? format(dueDate, "HH:mm") : ""}
+                      onChange={(e) => {
+                        if (dueDate && e.target.value) {
+                          const [hours, minutes] = e.target.value.split(":");
+                          const newDate = new Date(dueDate);
+                          newDate.setHours(parseInt(hours));
+                          newDate.setMinutes(parseInt(minutes));
+                          setDueDate(newDate);
+                        }
+                      }}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="mt-2"
+                      onClick={() => setDueDate(null)}
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      {t("cancel")}
+                    </Button>
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="important"
+              checked={important}
+              onCheckedChange={setImportant}
+            />
+            <Label htmlFor="important" className="flex items-center">
+              <Flag className="h-4 w-4 mr-2 text-red-500" />
+              {t("taskImportant")}
+            </Label>
+          </div>
+
+          <div className="flex justify-end space-x-2 pt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              {t("cancel")}
+            </Button>
+            <Button type="submit" className="todo-button-primary">
+              {t("save")}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default TaskForm;
