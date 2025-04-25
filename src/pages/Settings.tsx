@@ -3,7 +3,7 @@ import React from "react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useTranslation } from "@/lib/translations";
 import Layout from "@/components/Layout";
-import { Moon, Sun, Indonesian, English, Chinese } from "lucide-react";
+import { Moon, Sun, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -59,21 +59,21 @@ const Settings: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="en" id="lang-en" />
                   <Label htmlFor="lang-en" className="flex items-center">
-                    <English className="h-4 w-4 mr-2" />
+                    <Flag className="h-4 w-4 mr-2" />
                     {t("english")} 🇺🇸
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="id" id="lang-id" />
                   <Label htmlFor="lang-id" className="flex items-center">
-                    <Indonesian className="h-4 w-4 mr-2" />
+                    <Flag className="h-4 w-4 mr-2" />
                     {t("indonesian")} 🇮🇩
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="zh" id="lang-zh" />
                   <Label htmlFor="lang-zh" className="flex items-center">
-                    <Chinese className="h-4 w-4 mr-2" />
+                    <Flag className="h-4 w-4 mr-2" />
                     {t("chinese")} 🇨🇳
                   </Label>
                 </div>
