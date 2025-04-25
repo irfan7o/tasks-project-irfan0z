@@ -1,5 +1,3 @@
-import { getRequestConfig } from "next-intl/server";
-import { notFound } from "next/navigation";
 
 const locales = ["en", "id", "zh"];
 
@@ -10,18 +8,6 @@ export const getLocale = () => {
   );
   return locale || "en";
 };
-
-export async function generateRequestConfig({
-  locale,
-}: {
-  locale: string;
-}) {
-  if (!locales.includes(locale)) notFound();
-
-  return getRequestConfig({
-    messages: (await import(`./messages/${locale}.json`)).default,
-  });
-}
 
 export function useTranslation(locale: string) {
   const t = (key: string) => {
