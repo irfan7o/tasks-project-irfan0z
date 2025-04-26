@@ -52,10 +52,7 @@ export const translations = {
     addNewCategory: "Add New Category",
     categoryName: "Category Name",
     enterCategoryName: "Enter category name",
-    chooseIcon: "Choose Icon",
-    add: "Add",
-    Keyboard: "Keyboard",
-    KeyboardMusic: "Music Keyboard"
+    add: "Add"
   },
   id: {
     appTitle: "Tugas",
@@ -91,10 +88,7 @@ export const translations = {
     addNewCategory: "Tambah Kategori Baru",
     categoryName: "Nama Kategori",
     enterCategoryName: "Masukkan nama kategori",
-    chooseIcon: "Pilih Ikon",
-    add: "Tambah",
-    Keyboard: "Keyboard",
-    KeyboardMusic: "Keyboard Musik"
+    add: "Tambah"
   },
   zh: {
     appTitle: "任务",
@@ -130,9 +124,6 @@ export const translations = {
     addNewCategory: "添加新类别",
     categoryName: "类别名称",
     enterCategoryName: "输入类别名称",
-    chooseIcon: "选择图标",
-    add: "添加",
-    Keyboard: "键盘",
-    KeyboardMusic: "音乐键盘"
+    add: "添加"
   },
 };

@@ -1,6 +1,7 @@
+
 import React from "react";
 import { format } from "date-fns";
-import { Check, Trash2, Edit, Flag, FlagOff, Keyboard, KeyboardMusic } from "lucide-react";
+import { Check, Trash2, Edit, Flag, FlagOff } from "lucide-react";
 import { useTasks, Task } from "@/contexts/TaskContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useTranslation } from "@/lib/translations";
@@ -24,25 +25,6 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
   };
 
   const isOverdue = task.dueDate && new Date() > task.dueDate && !task.completed;
-
-  // Get the icon for the category
-  const getCategoryIcon = () => {
-    const category = categories.find(c => c.id === task.category);
-    
-    if (!category) return "📝";
-    
-    // Check if icon is a keyboard icon name
-    if (category.icon === "Keyboard") {
-      return <Keyboard className="h-4 w-4" />;
-    } else if (category.icon === "KeyboardMusic") {
-      return <KeyboardMusic className="h-4 w-4" />;
-    }
-    
-    // Otherwise return emoji
-    return category.icon;
-  };
-
-  const categoryIcon = getCategoryIcon();
 
   return (
     <div className={`task-card animate-fade-in ${task.completed ? "opacity-70" : ""}`}>
@@ -90,9 +72,6 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit }) => {
               <span 
                 className="inline-flex items-center text-xs px-2 py-1 rounded-full bg-secondary"
               >
-                <span className="mr-1 flex items-center">
-                  {categoryIcon}
-                </span>
                 {t(task.category)}
               </span>
               

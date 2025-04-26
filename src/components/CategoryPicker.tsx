@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Plus, Check, Keyboard, KeyboardMusic } from "lucide-react";
+import { Plus } from "lucide-react";
 import { TaskCategory } from "@/contexts/TaskContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useTranslation } from "@/lib/translations";
@@ -23,17 +23,6 @@ interface CategoryPickerProps {
   onAddCategory: (category: { id: string; label: string; icon: string }) => void;
 }
 
-const EMOJI_OPTIONS = [
-  "📝", "🎹", "🎮", "⌨️", "🎛️", 
-  "🖥️", "💻", "📱", "🎚️", "🔤"
-];
-
-// Added keyboard icon options
-const ICON_OPTIONS = [
-  { name: "Keyboard", component: <Keyboard className="h-5 w-5" /> },
-  { name: "KeyboardMusic", component: <KeyboardMusic className="h-5 w-5" /> },
-];
-
 export const CategoryPicker: React.FC<CategoryPickerProps> = ({ 
   value, 
   onChange, 
@@ -45,9 +34,6 @@ export const CategoryPicker: React.FC<CategoryPickerProps> = ({
   
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
-  const [selectedIcon, setSelectedIcon] = useState(EMOJI_OPTIONS[0]);
-  const [useEmojiIcons, setUseEmojiIcons] = useState(true);
-  const [selectedKeyboardIcon, setSelectedKeyboardIcon] = useState(ICON_OPTIONS[0].name);
 
   const handleAddCategory = () => {
     if (!newCategoryName.trim()) return;
@@ -56,13 +42,11 @@ export const CategoryPicker: React.FC<CategoryPickerProps> = ({
     onAddCategory({
       id: newId,
       label: newCategoryName,
-      icon: useEmojiIcons ? selectedIcon : selectedKeyboardIcon,
+      icon: "", // Empty icon
     });
     
     onChange(newId);
     setNewCategoryName("");
-    setSelectedIcon(EMOJI_OPTIONS[0]);
-    setSelectedKeyboardIcon(ICON_OPTIONS[0].name);
     setIsAddingCategory(false);
   };
 
@@ -76,7 +60,6 @@ export const CategoryPicker: React.FC<CategoryPickerProps> = ({
             <SelectValue>
               {selectedCategory ? (
                 <div className="flex items-center gap-2">
-                  <span className="mr-1">{selectedCategory.icon}</span>
                   <span>{t(selectedCategory.label)}</span>
                 </div>
               ) : (
@@ -88,7 +71,6 @@ export const CategoryPicker: React.FC<CategoryPickerProps> = ({
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
                 <div className="flex items-center gap-2">
-                  <span className="mr-1">{category.icon}</span>
                   <span>{t(category.label)}</span>
                 </div>
               </SelectItem>
@@ -124,62 +106,6 @@ export const CategoryPicker: React.FC<CategoryPickerProps> = ({
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 placeholder={t("enterCategoryName")}
               />
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between items-center mb-2">
-                <Label>{t("chooseIcon")}</Label>
-                <div className="flex items-center gap-2">
-                  <Button 
-                    type="button" 
-                    size="sm"
-                    variant={useEmojiIcons ? "default" : "outline"}
-                    onClick={() => setUseEmojiIcons(true)}
-                  >
-                    Emoji
-                  </Button>
-                  <Button 
-                    type="button" 
-                    size="sm"
-                    variant={!useEmojiIcons ? "default" : "outline"}
-                    onClick={() => setUseEmojiIcons(false)}
-                  >
-                    Keyboard
-                  </Button>
-                </div>
-              </div>
-              
-              {useEmojiIcons ? (
-                <div className="grid grid-cols-5 gap-2">
-                  {EMOJI_OPTIONS.map((emoji) => (
-                    <Button
-                      key={emoji}
-                      type="button"
-                      variant={selectedIcon === emoji ? "default" : "outline"}
-                      className={`h-10 w-10 p-0 text-xl ${
-                        selectedIcon === emoji ? "border-primary" : ""
-                      }`}
-                      onClick={() => setSelectedIcon(emoji)}
-                    >
-                      {emoji}
-                    </Button>
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  {ICON_OPTIONS.map((icon) => (
-                    <Button
-                      key={icon.name}
-                      type="button"
-                      variant={selectedKeyboardIcon === icon.name ? "default" : "outline"}
-                      className="h-10 flex justify-center items-center"
-                      onClick={() => setSelectedKeyboardIcon(icon.name)}
-                    >
-                      {icon.component}
-                    </Button>
-                  ))}
-                </div>
-              )}
             </div>
             
             <div className="flex justify-end space-x-2 pt-4">
