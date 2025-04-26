@@ -127,35 +127,39 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, isOpen, onClose }) => {
                   className="pointer-events-auto"
                 />
                 {dueDate && (
-                  <div className="p-3 border-t">
-                    <div className="mb-2 text-sm font-medium">Select time:</div>
-                    <Input
-                      type="time"
-                      value={dueDate ? format(dueDate, "HH:mm") : ""}
-                      onChange={(e) => {
-                        if (dueDate && e.target.value) {
-                          const [hours, minutes] = e.target.value.split(":");
-                          const newDate = new Date(dueDate);
-                          newDate.setHours(parseInt(hours));
-                          newDate.setMinutes(parseInt(minutes));
-                          setDueDate(newDate);
-                        }
-                      }}
-                      className="w-full pointer-events-auto bg-background text-foreground border-input focus:ring-ring"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="mt-2 hover:bg-muted"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDueDate(null);
-                      }}
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      {t("cancel")}
-                    </Button>
+                  <div className="p-3 border-t border-border">
+                    <div className="mb-2 text-sm font-medium text-foreground">{t("selectTime")}</div>
+                    <div className="relative isolate">
+                      <Input
+                        type="time"
+                        value={dueDate ? format(dueDate, "HH:mm") : ""}
+                        onChange={(e) => {
+                          if (dueDate && e.target.value) {
+                            const [hours, minutes] = e.target.value.split(":");
+                            const newDate = new Date(dueDate);
+                            newDate.setHours(parseInt(hours));
+                            newDate.setMinutes(parseInt(minutes));
+                            setDueDate(newDate);
+                          }
+                        }}
+                        className="w-full pointer-events-auto bg-background text-foreground border-input focus:ring-ring z-10"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </div>
+                    <div className="mt-3 flex justify-end">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="hover:bg-muted text-sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDueDate(null);
+                        }}
+                      >
+                        <X className="h-4 w-4 mr-1" />
+                        {t("cancel")}
+                      </Button>
+                    </div>
                   </div>
                 )}
               </PopoverContent>
