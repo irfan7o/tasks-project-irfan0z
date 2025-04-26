@@ -128,6 +128,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, isOpen, onClose }) => {
                 />
                 {dueDate && (
                   <div className="p-3 border-t">
+                    <div className="mb-2 text-sm font-medium">Select time:</div>
                     <Input
                       type="time"
                       value={dueDate ? format(dueDate, "HH:mm") : ""}
@@ -140,12 +141,17 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, isOpen, onClose }) => {
                           setDueDate(newDate);
                         }
                       }}
+                      className="w-full pointer-events-auto"
+                      onClick={(e) => e.stopPropagation()}
                     />
                     <Button
                       variant="ghost"
                       size="sm"
                       className="mt-2"
-                      onClick={() => setDueDate(null)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDueDate(null);
+                      }}
                     >
                       <X className="h-4 w-4 mr-1" />
                       {t("cancel")}
