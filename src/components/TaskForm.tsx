@@ -141,13 +141,13 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, isOpen, onClose }) => {
                           setDueDate(newDate);
                         }
                       }}
-                      className="w-full pointer-events-auto"
+                      className="w-full pointer-events-auto bg-background text-foreground border-input focus:ring-ring"
                       onClick={(e) => e.stopPropagation()}
                     />
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="mt-2"
+                      className="mt-2 hover:bg-muted"
                       onClick={(e) => {
                         e.stopPropagation();
                         setDueDate(null);
