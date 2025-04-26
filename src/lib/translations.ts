@@ -54,6 +54,8 @@ export const translations = {
     enterCategoryName: "Enter category name",
     chooseIcon: "Choose Icon",
     add: "Add",
+    Keyboard: "Keyboard",
+    KeyboardMusic: "Music Keyboard"
   },
   id: {
     appTitle: "Tugas",
@@ -91,6 +93,8 @@ export const translations = {
     enterCategoryName: "Masukkan nama kategori",
     chooseIcon: "Pilih Ikon",
     add: "Tambah",
+    Keyboard: "Keyboard",
+    KeyboardMusic: "Keyboard Musik"
   },
   zh: {
     appTitle: "任务",
@@ -128,5 +132,7 @@ export const translations = {
     enterCategoryName: "输入类别名称",
     chooseIcon: "选择图标",
     add: "添加",
+    Keyboard: "键盘",
+    KeyboardMusic: "音乐键盘"
   },
 };
