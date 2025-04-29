@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Simple Task
 
 ![Screenshot from 2025-04-26 16-29-09](https://github.com/user-attachments/assets/c8665d98-4014-4c60-a8e1-878da04e33d5)
 
